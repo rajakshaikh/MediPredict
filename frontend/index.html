@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MediPredict — Disease Prediction & Patient Management</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="app-container">
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">⚕️</div>
+      <div class="brand-text">
+        <h1>MediPredict</h1>
+        <p>Clinical Intelligence</p>
+      </div>
+    </div>
+
+    <ul class="nav-links">
+      <li class="nav-item active" data-view="dashboard-view">
+        <span class="nav-icon">📊</span>
+        <span>Dashboard</span>
+      </li>
+      <li class="nav-item" data-view="patient-reg-view">
+        <span class="nav-icon">👤</span>
+        <span>Patient Registration</span>
+      </li>
+      <li class="nav-item" data-view="general-predict-view">
+        <span class="nav-icon">🧪</span>
+        <span>Disease Prediction</span>
+      </li>
+      <li class="nav-item" data-view="heart-predict-view">
+        <span class="nav-icon">❤️</span>
+        <span>Heart Disease Prediction</span>
+      </li>
+      <li class="nav-item" data-view="history-view">
+        <span class="nav-icon">📋</span>
+        <span>Prediction History</span>
+      </li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <span class="status-dot"></span>
+      <span>Spring Boot Backend Connected</span>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main class="main-content">
+    <!-- Top Header Bar -->
+    <header class="top-bar">
+      <div>
+        <h2 class="top-bar-title">Clinical Decision Support System</h2>
+      </div>
+      <!-- Active Patient Indicator -->
+      <div id="active-patient-badge" class="patient-context-badge" style="display: none;">
+        <span class="patient-badge-title">Active Patient:</span>
+        <span id="active-patient-name" class="patient-badge-value">#1</span>
+      </div>
+    </header>
+
+    <div class="content-body">
+      <!-- ================================================================= -->
+      <!-- 1. DASHBOARD VIEW -->
+      <!-- ================================================================= -->
+      <section id="dashboard-view" class="view-section active">
+        <div class="page-header">
+          <h2>Clinical Intelligence Overview</h2>
+          <p>AI-assisted multi-symptom and heart disease risk evaluation system.</p>
+        </div>
+
+        <!-- Metric Cards -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon blue">👥</div>
+            <div class="stat-info">
+              <h3 id="stat-total-patients">0</h3>
+              <p>Registered Patients</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon teal">📈</div>
+            <div class="stat-info">
+              <h3 id="stat-total-predictions">0</h3>
+              <p>Total Predictions Generated</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon purple">🤖</div>
+            <div class="stat-info">
+              <h3>2 ML Models</h3>
+              <p>132 Symptoms & 13 Heart Metrics</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Navigation Cards -->
+        <div class="quick-actions-section">
+          <h3 class="section-title">Quick Actions</h3>
+          <div class="quick-actions-grid">
+            <div class="action-card" data-navigate="patient-reg-view">
+              <div>
+                <div class="action-card-header">
+                  <span class="action-card-icon">📝</span>
+                  <h4>Register Patient</h4>
+                </div>
+                <p>Add a new patient record to the MySQL database to track demographic and clinical data.</p>
+              </div>
+              <button class="btn btn-secondary btn-block">Go to Registration &rarr;</button>
+            </div>
+
+            <div class="action-card" data-navigate="general-predict-view">
+              <div>
+                <div class="action-card-header">
+                  <span class="action-card-icon">🔬</span>
+                  <h4>Disease Prediction</h4>
+                </div>
+                <p>Select from 132 known medical symptoms to predict potential conditions across 41 disease classes.</p>
+              </div>
+              <button class="btn btn-primary btn-block">Predict Disease &rarr;</button>
+            </div>
+
+            <div class="action-card" data-navigate="heart-predict-view">
+              <div>
+                <div class="action-card-header">
+                  <span class="action-card-icon">💓</span>
+                  <h4>Heart Disease Prediction</h4>
+                </div>
+                <p>Assess cardiovascular risk using 13 clinical diagnostic parameters and blood biomarkers.</p>
+              </div>
+              <button class="btn btn-primary btn-block">Assess Heart Risk &rarr;</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================= -->
+      <!-- 2. PATIENT REGISTRATION VIEW -->
+      <!-- ================================================================= -->
+      <section id="patient-reg-view" class="view-section">
+        <div class="page-header">
+          <h2>Patient Registration</h2>
+          <p>Register a new patient into the hospital registry before generating predictions.</p>
+        </div>
+
+        <div id="patient-reg-alert"></div>
+
+        <div class="card">
+          <div class="card-title">Patient Demographics</div>
+          <form id="patient-form">
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="patient-name">Full Name *</label>
+                <input type="text" id="patient-name" placeholder="e.g. John Doe" required>
+              </div>
+
+              <div class="form-group">
+                <label for="patient-age">Age *</label>
+                <input type="number" id="patient-age" min="0" max="150" placeholder="e.g. 45" required>
+              </div>
+
+              <div class="form-group">
+                <label for="patient-gender">Gender *</label>
+                <select id="patient-gender" required>
+                  <option value="">Select Gender</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="patient-email">Email Address</label>
+                <input type="email" id="patient-email" placeholder="e.g. john.doe@example.com">
+                <span class="field-hint">Optional, unique identifier for patient records</span>
+              </div>
+            </div>
+
+            <div style="margin-top: 24px; display: flex; gap: 12px;">
+              <button type="submit" class="btn btn-primary">Register Patient</button>
+              <button type="reset" class="btn btn-secondary">Clear Form</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- ================================================================= -->
+      <!-- 3. GENERAL DISEASE PREDICTION VIEW -->
+      <!-- ================================================================= -->
+      <section id="general-predict-view" class="view-section">
+        <div class="page-header">
+          <h2>General Disease Prediction</h2>
+          <p>Select observed symptoms from the 132-symptom medical catalog to run random forest classification.</p>
+        </div>
+
+        <div id="general-predict-alert"></div>
+
+        <!-- Patient Selection Context -->
+        <div class="patient-selector-box">
+          <div class="patient-selector-input">
+            <label for="targetPatientId">Target Patient ID *</label>
+            <input type="number" id="targetPatientId" name="targetPatientId" min="1" placeholder="e.g. 1" required>
+          </div>
+          <span class="field-hint">Prediction history will be permanently saved to this patient's profile in MySQL.</span>
+        </div>
+
+        <!-- Symptoms Selector -->
+        <!-- Symptoms Selector -->
+        <div class="card">
+          <!-- 1. SELECTED SYMPTOMS -->
+          <div class="selected-symptoms-section" id="selected-symptoms-section">
+            <div class="selected-symptoms-header">
+              <span class="selected-symptoms-title">
+                Selected Symptoms (<span id="selected-count">0</span> / 132)
+              </span>
+              <div style="display: flex; gap: 8px; align-items: center;">
+                <button type="button" id="predict-general-btn-top" class="btn btn-primary btn-sm">
+                  Predict Disease &rarr;
+                </button>
+                <button type="button" id="clear-symptoms-btn" class="btn btn-secondary btn-sm" title="Clear currently selected symptoms">
+                  Clear Selection
+                </button>
+              </div>
+            </div>
+            <div id="selected-chips" class="chips-container">
+              <span class="no-selection-msg">No symptoms selected. Click symptoms below or search to add.</span>
+            </div>
+          </div>
+
+          <!-- 2. SEARCH -->
+          <div class="symptom-search-bar">
+            <div class="symptom-search-input-wrapper">
+              <input type="text" id="symptom-search" placeholder="🔍 Search symptoms (e.g. fever, headache, cough)..." autocomplete="off">
+              <button type="button" id="clear-search-btn" class="clear-search-btn" style="display: none;" title="Clear search">&times;</button>
+            </div>
+          </div>
+
+          <!-- 3. QUICK FILTERS -->
+          <div class="quick-filters-container">
+            <div class="quick-filters-label">Quick Filters:</div>
+            <div class="quick-filters-bar" id="quick-filters-bar">
+              <button type="button" class="filter-pill active" data-filter="all">All (132)</button>
+              <button type="button" class="filter-pill" data-filter="common">Common</button>
+              <button type="button" class="filter-pill" data-filter="General">General</button>
+              <button type="button" class="filter-pill" data-filter="Fever / Infection">Fever / Infection</button>
+              <button type="button" class="filter-pill" data-filter="Respiratory">Respiratory</button>
+              <button type="button" class="filter-pill" data-filter="Digestive">Digestive</button>
+              <button type="button" class="filter-pill" data-filter="Skin">Skin</button>
+              <button type="button" class="filter-pill" data-filter="Pain">Pain</button>
+              <button type="button" class="filter-pill" data-filter="Neurological">Neurological</button>
+              <button type="button" class="filter-pill" data-filter="Eye / Vision">Eye / Vision</button>
+              <button type="button" class="filter-pill" data-filter="Urinary">Urinary</button>
+              <button type="button" class="filter-pill" data-filter="Heart / Circulation">Heart / Circulation</button>
+              <button type="button" class="filter-pill" data-filter="Musculoskeletal">Musculoskeletal</button>
+              <button type="button" class="filter-pill" data-filter="Other">Other</button>
+            </div>
+          </div>
+
+          <!-- 4. CATEGORIZED SYMPTOMS LIBRARY -->
+          <div class="library-header-row">
+            <span class="library-title">Available Symptoms Library</span>
+            <span id="matching-count-badge" class="matching-badge" style="display: none;"></span>
+          </div>
+
+          <!-- Empty search result state -->
+          <div id="no-symptoms-found" class="no-symptoms-found" style="display: none;">
+            <p>No symptoms found matching "<strong id="search-query-display"></strong>"</p>
+            <button type="button" id="reset-search-btn" class="btn btn-secondary btn-sm" style="margin-top: 10px;">Clear Search</button>
+          </div>
+
+          <!-- Collapsible categories container -->
+          <div id="symptoms-categories-container" class="symptoms-categories-scroll">
+            <div style="padding: 16px; color: var(--text-muted);">Loading symptoms library...</div>
+          </div>
+
+          <!-- Action buttons -->
+          <div style="margin-top: 24px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+            <button type="button" id="predict-general-btn" class="btn btn-primary btn-lg">
+              Predict Disease
+            </button>
+            <button type="button" id="clear-symptoms-btn-bottom" class="btn btn-secondary btn-lg" title="Reset all selected symptoms and filters">
+              Reset Selection
+            </button>
+          </div>
+        </div>
+
+        <!-- Result Card -->
+        <div id="general-result-card" class="result-card">
+          <div class="result-header">
+            <span class="result-badge">Prediction Generated</span>
+            <span class="result-meta-id">Record ID: <strong id="general-result-id">#</strong></span>
+          </div>
+
+          <div class="result-subheading">Predicted Medical Condition:</div>
+          <div id="general-result-disease" class="prediction-highlight">Condition Name</div>
+
+          <div class="probability-bar-container">
+            <div class="probability-label">
+              <span>Confidence Probability</span>
+              <span id="general-result-prob-text">0%</span>
+            </div>
+            <div class="probability-bar-bg">
+              <div id="general-result-prob-bar" class="probability-bar-fill" style="width: 0%;"></div>
+            </div>
+          </div>
+
+          <div style="margin-top: 14px;">
+            <span style="font-size: 0.82rem; font-weight: 600; color: #475569;">Symptoms Evaluated:</span>
+            <div id="general-result-symptoms" style="margin-top: 6px; display: flex; flex-wrap: wrap;"></div>
+          </div>
+
+          <div class="result-meta">
+            <span>Patient: <strong id="general-result-patient">-</strong></span>
+            <span>Persistence: <strong>Saved in MySQL</strong></span>
+          </div>
+
+          <div style="margin-top: 18px;">
+            <button type="button" id="general-download-pdf-btn" class="btn btn-secondary">
+              📄 Download PDF Report
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================= -->
+      <!-- 4. HEART DISEASE PREDICTION VIEW -->
+      <!-- ================================================================= -->
+      <section id="heart-predict-view" class="view-section">
+        <div class="page-header">
+          <h2>Heart Disease Risk Assessment</h2>
+          <p>Evaluate cardiovascular risk using 13 clinical metrics and laboratory diagnostics.</p>
+        </div>
+
+        <div id="heart-predict-alert"></div>
+
+        <!-- Patient Selection Context -->
+        <div class="patient-selector-box">
+          <div class="patient-selector-input">
+            <label for="heart-patient-id">Target Patient ID *</label>
+            <input type="number" id="heart-patient-id" min="1" placeholder="e.g. 1" required>
+          </div>
+          <span class="field-hint">Prediction history will be saved to this patient's profile in MySQL.</span>
+        </div>
+
+        <div class="card">
+          <div class="card-title">13 Clinical Parameters</div>
+          <form id="heart-disease-form">
+            <div class="form-grid">
+              <!-- 1. Age -->
+              <div class="form-group">
+                <label for="heart-age">1. Age (years) *</label>
+                <input type="number" id="heart-age" min="1" max="120" value="55" required>
+              </div>
+
+              <!-- 2. Sex -->
+              <div class="form-group">
+                <label for="heart-sex">2. Sex *</label>
+                <select id="heart-sex" required>
+                  <option value="1">1 - Male</option>
+                  <option value="0">0 - Female</option>
+                </select>
+              </div>
+
+              <!-- 3. Chest Pain Type -->
+              <div class="form-group">
+                <label for="heart-cp">3. Chest Pain Type (cp) *</label>
+                <select id="heart-cp" required>
+                  <option value="0">0 - Typical Angina</option>
+                  <option value="1">1 - Atypical Angina</option>
+                  <option value="2">2 - Non-anginal Pain</option>
+                  <option value="3">3 - Asymptomatic</option>
+                </select>
+              </div>
+
+              <!-- 4. Resting Blood Pressure -->
+              <div class="form-group">
+                <label for="heart-trestbps">4. Resting Blood Pressure (trestbps in mm Hg) *</label>
+                <input type="number" id="heart-trestbps" min="50" max="250" value="130" required>
+              </div>
+
+              <!-- 5. Serum Cholesterol -->
+              <div class="form-group">
+                <label for="heart-chol">5. Serum Cholesterol (chol in mg/dl) *</label>
+                <input type="number" id="heart-chol" min="80" max="600" value="240" required>
+              </div>
+
+              <!-- 6. Fasting Blood Sugar -->
+              <div class="form-group">
+                <label for="heart-fbs">6. Fasting Blood Sugar > 120 mg/dl (fbs) *</label>
+                <select id="heart-fbs" required>
+                  <option value="0">0 - False (&le; 120 mg/dl)</option>
+                  <option value="1">1 - True (&gt; 120 mg/dl)</option>
+                </select>
+              </div>
+
+              <!-- 7. Resting ECG -->
+              <div class="form-group">
+                <label for="heart-restecg">7. Resting ECG Results (restecg) *</label>
+                <select id="heart-restecg" required>
+                  <option value="0">0 - Normal</option>
+                  <option value="1">1 - ST-T Wave Abnormality</option>
+                  <option value="2">2 - Left Ventricular Hypertrophy</option>
+                </select>
+              </div>
+
+              <!-- 8. Maximum Heart Rate -->
+              <div class="form-group">
+                <label for="heart-thalach">8. Maximum Heart Rate Achieved (thalach) *</label>
+                <input type="number" id="heart-thalach" min="60" max="250" value="150" required>
+              </div>
+
+              <!-- 9. Exercise-Induced Angina -->
+              <div class="form-group">
+                <label for="heart-exang">9. Exercise Induced Angina (exang) *</label>
+                <select id="heart-exang" required>
+                  <option value="0">0 - No</option>
+                  <option value="1">1 - Yes</option>
+                </select>
+              </div>
+
+              <!-- 10. Oldpeak -->
+              <div class="form-group">
+                <label for="heart-oldpeak">10. ST Depression (oldpeak) *</label>
+                <input type="number" id="heart-oldpeak" step="0.1" min="0" max="10" value="1.2" required>
+                <span class="field-hint">ST depression induced by exercise relative to rest</span>
+              </div>
+
+              <!-- 11. Slope -->
+              <div class="form-group">
+                <label for="heart-slope">11. Slope of Peak Exercise ST (slope) *</label>
+                <select id="heart-slope" required>
+                  <option value="0">0 - Upsloping</option>
+                  <option value="1">1 - Flat</option>
+                  <option value="2">2 - Downsloping</option>
+                </select>
+              </div>
+
+              <!-- 12. CA -->
+              <div class="form-group">
+                <label for="heart-ca">12. Major Vessels Colored by Fluoroscopy (ca) *</label>
+                <select id="heart-ca" required>
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                </select>
+              </div>
+
+              <!-- 13. Thal -->
+              <div class="form-group">
+                <label for="heart-thal">13. Thalassemia (thal) *</label>
+                <select id="heart-thal" required>
+                  <option value="1">1 - Normal</option>
+                  <option value="2">2 - Fixed Defect</option>
+                  <option value="3">3 - Reversible Defect</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="margin-top: 24px;">
+              <button type="submit" class="btn btn-primary btn-lg">
+                Evaluate Heart Disease Risk
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Result Card -->
+        <div id="heart-result-card" class="result-card">
+          <div class="result-header">
+            <span id="heart-result-badge" class="result-badge">Evaluation Completed</span>
+            <span class="result-meta-id">Record ID: <strong id="heart-result-id">#</strong></span>
+          </div>
+
+          <div class="result-subheading">Diagnostic Assessment:</div>
+          <div id="heart-result-title" class="prediction-highlight">Result</div>
+
+          <div class="probability-bar-container">
+            <div class="probability-label">
+              <span>Risk Probability</span>
+              <span id="heart-result-prob-text">0%</span>
+            </div>
+            <div class="probability-bar-bg">
+              <div id="heart-result-prob-bar" class="probability-bar-fill" style="width: 0%;"></div>
+            </div>
+          </div>
+
+          <div class="result-meta">
+            <span>Patient: <strong id="heart-result-patient">-</strong></span>
+            <span>Persistence: <strong>Saved in MySQL</strong></span>
+          </div>
+
+          <div style="margin-top: 18px;">
+            <button type="button" id="heart-download-pdf-btn" class="btn btn-secondary">
+              📄 Download PDF Report
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================= -->
+      <!-- 5. PREDICTION HISTORY VIEW -->
+      <!-- ================================================================= -->
+      <section id="history-view" class="view-section">
+        <div class="page-header">
+          <h2>Prediction History & Audit Trail</h2>
+          <p>Review past disease predictions, input metrics, probabilities, and timestamps.</p>
+        </div>
+
+        <div id="history-alert"></div>
+
+        <div class="card">
+          <div class="card-title">Filter Records</div>
+          <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <label for="history-patient-id" style="white-space: nowrap;">Patient ID:</label>
+              <input type="number" id="history-patient-id" min="1" placeholder="e.g. 1" style="max-width: 140px;">
+            </div>
+            <button type="button" id="fetch-history-btn" class="btn btn-primary">Load Patient History</button>
+            <button type="button" id="view-all-history-btn" class="btn btn-secondary">View All System Records</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Historical Log (Newest First)</div>
+
+          <!-- Empty State -->
+          <div id="history-empty-state" class="empty-state" style="display: none;">
+            <div class="empty-state-icon">📂</div>
+            <h4>No Prediction Records Found</h4>
+            <p>Run a disease or heart prediction for a patient to populate their clinical history.</p>
+          </div>
+
+          <!-- Table Container -->
+          <div id="history-table-container" class="table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Patient</th>
+                  <th>Type</th>
+                  <th>Predicted Result</th>
+                  <th>Probability</th>
+                  <th>Input Data</th>
+                  <th>Date & Time</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="history-table-body">
+                <tr>
+                  <td colspan="8" style="text-align: center; padding: 20px; color: #94a3b8;">
+                    Enter a Patient ID or click "View All System Records" to view history.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<!-- Scripts -->
+<script src="js/api.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
